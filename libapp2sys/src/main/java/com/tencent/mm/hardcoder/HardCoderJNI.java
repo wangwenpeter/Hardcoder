@@ -393,6 +393,11 @@ public class HardCoderJNI {
                             anrCallback.onANR(buffer);
                         }
                         break;
+                    case FUNC_REG_SYSTEM_EVENT_CALLBACK:
+                        if (systemEventCallback != null) {
+                            systemEventCallback.onEvent(buffer);
+                        }
+                        break;
                     default:
                         onRequestCallback(callbackType, requestId, retCode, funcId, dataType, buffer);
                         break;
@@ -553,6 +558,19 @@ public class HardCoderJNI {
     public static long registerANRCallback(AnrCallback callback) {
         anrCallback = callback;
         return registerANRCallback(Process.myTid(), SystemClock.elapsedRealtime());
+    }
+
+    /**
+     * System Event callback
+     * {@link #onData(int, long, long, int, int, int, byte[])}
+     */
+    private static SystemEventCallback systemEventCallback;
+    public interface SystemEventCallback {
+        void onEvent(byte[] buffer);
+    }
+    public static long registerSystemEventCallback(SystemEventCallback callback) {
+        systemEventCallback = callback;
+        return registerSystemEventCallback(Process.myTid(), SystemClock.elapsedRealtime());
     }
 
     /**
